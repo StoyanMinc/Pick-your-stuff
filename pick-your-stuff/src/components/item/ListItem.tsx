@@ -1,22 +1,26 @@
-import { View, Text, FlatList, TouchableOpacity, Switch, _View, TextInput } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Switch, TextInput, Alert } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
+
 import { listItems, lists } from '../../constants';
-import { useEffect, useRef, useState } from 'react';
 import { styles } from './ListItem.styles';
 
 type RootStackParamList = {
     'Your Lists': undefined;
     List: { id: string };
 };
+
 type ListRouteProp = RouteProp<RootStackParamList, 'List'>;
 
 export default function ListItem() {
     const [items, setItems] = useState(listItems);
     const [showAddInput, SetShowAddInput] = useState<boolean>(false);
     const [newItem, setNewItem] = useState<string>('');
+
     const inputRef = useRef<TextInput>(null);
     const route = useRoute<ListRouteProp>();
+
     const navigation = useNavigation();
     const { id } = route.params;
 
@@ -63,15 +67,26 @@ export default function ListItem() {
         setItems((prev) => ([
             ...prev,
             {
-                _id: 'string',
-                title: 'string',
+                _id: '123',
+                title: 'NEW ITEM',
                 isCheked: false,
-                listId: 'list-2',
-                ownerId: 'string'
+                listId: id,
+                ownerId: '1'
             }
         ]))
         setNewItem('');
         SetShowAddInput(false);
+    }
+
+    const showDeleteConfirmation = (id: string, title: string) => {
+        Alert.alert(
+            'Delete Item',
+            `Are you sure you want to delete "${title}"?`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', style: 'destructive', onPress: () => deleteItem(id) },
+            ]
+        );
     }
 
     const deleteItem = (id: string) => {
@@ -129,7 +144,7 @@ export default function ListItem() {
                                     value={item.isCheked}
                                     onValueChange={() => toggleSwitch(item._id)}
                                 />
-                                <TouchableOpacity onLongPress={() => deleteItem(item._id)}>
+                                <TouchableOpacity onLongPress={() => showDeleteConfirmation(item._id, item.title)}>
                                     <Text>{item.title}</Text>
                                 </TouchableOpacity>
                             </View>
