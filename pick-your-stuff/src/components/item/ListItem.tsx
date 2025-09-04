@@ -1,8 +1,8 @@
-import { View, Text, FlatList, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Switch, _View, TextInput } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { listItems, lists } from '../../constants';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { styles } from './ListItem.styles';
 
 type RootStackParamList = {
@@ -13,6 +13,9 @@ type ListRouteProp = RouteProp<RootStackParamList, 'List'>;
 
 export default function ListItem() {
     const [items, setItems] = useState(listItems);
+    const [showAddInput, SetShowAddInput] = useState<boolean>(false);
+    const [newItem, setNewItem] = useState<string>('');
+    const inputRef = useRef<TextInput>(null);
     const route = useRoute<ListRouteProp>();
     const navigation = useNavigation();
     const { id } = route.params;
@@ -24,6 +27,12 @@ export default function ListItem() {
             navigation.setOptions({ title: currentList.title });
         }
     }, [navigation, currentList]);
+
+    useEffect(() => {
+        if (showAddInput && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [showAddInput]);
 
     const listItemsToShow = items.filter((item) => item.listId === id);
     // const listItemsToShow: any = []
@@ -49,12 +58,30 @@ export default function ListItem() {
         })))
     }
 
-    const addItem = () => {
-        console.log('add');
+    const addNewItem = () => {
+        console.log(newItem);
+        setItems((prev) => ([
+            ...prev,
+            {
+                _id: 'string',
+                title: 'string',
+                isCheked: false,
+                listId: 'list-2',
+                ownerId: 'string'
+            }
+        ]))
+        setNewItem('');
+        SetShowAddInput(false);
     }
 
+    const deleteItem = (id: string) => {
+        setItems((prev) => prev.filter((item) => item._id !== id));
+    }
     return (
         <View style={styles.container}>
+            <View>
+
+            </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.checkButtonsContainer}>
                     <TouchableOpacity
@@ -70,13 +97,27 @@ export default function ListItem() {
                 </View>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={addItem}
+                    onPress={() => SetShowAddInput(true)}
                 >
                     <Text style={styles.buttonText}>ADD NEW</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
-
+                {showAddInput && (
+                    <View style={styles.addItemContainer}>
+                        <TextInput
+                            style={styles.input}
+                            ref={inputRef}
+                            value={newItem}
+                            onChangeText={setNewItem}
+                        />
+                        <TouchableOpacity
+                            style={[styles.button, styles.confirmButton]}
+                            onPress={addNewItem}>
+                            <Text style={styles.buttonText}>Confirm</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
                 {listItemsToShow.length > 0
                     ? <FlatList
                         data={listItemsToShow}
@@ -88,7 +129,9 @@ export default function ListItem() {
                                     value={item.isCheked}
                                     onValueChange={() => toggleSwitch(item._id)}
                                 />
-                                <Text>{item.title}</Text>
+                                <TouchableOpacity onLongPress={() => deleteItem(item._id)}>
+                                    <Text>{item.title}</Text>
+                                </TouchableOpacity>
                             </View>
                         )}
                     />

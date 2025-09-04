@@ -37,6 +37,23 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 12
     },
+    addItemContainer: {
+        gap: 10,
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    input: {
+        borderColor: 'green',
+        borderWidth: 0.2,
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 10
+    },
+    confirmButton: {
+        backgroundColor: 'green'
+    },
     itemView: {
         flexDirection: 'row',
         alignItems: 'center',
