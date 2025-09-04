@@ -14,12 +14,12 @@ export default function AppNavigator() {
                     backgroundColor: '#f2f2f7',
                     borderTopWidth: 0,
                     elevation: 10,
-                    height: 85,           // increased height
-                    paddingBottom: 15,    // more space for icons
+                    height: 85,
+                    paddingBottom: 15,
                     paddingTop: 10,
-                    borderTopLeftRadius: 20, // rounded corners
+                    borderTopLeftRadius: 20,
                     borderTopRightRadius: 20,
-                    position: 'absolute',     // optional: floating effect
+                    position: 'absolute',
                     left: 0,
                     right: 0,
                 },
@@ -47,15 +47,6 @@ export default function AppNavigator() {
                         <Ionicons name="list" size={size + 4} color={color} />
                     ),
                     headerShown: false
-                }}
-            />
-            <Tab.Screen
-                name="Create List"
-                component={() => null}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="add-circle" size={size + 4} color={color} />
-                    ),
                 }}
             />
             <Tab.Screen

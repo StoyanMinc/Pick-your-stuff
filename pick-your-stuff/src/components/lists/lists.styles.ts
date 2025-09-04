@@ -20,6 +20,40 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    addList: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginBottom: 10,
+    },
+    addButton: {
+        backgroundColor: 'blue',
+        padding: 10,
+        width: 150,
+        borderRadius: 10,
+    },
+    confirmButton: {
+        backgroundColor: 'green'
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 12
+    },
+    addListContainer: {
+        gap: 10,
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    input: {
+        borderColor: 'green',
+        borderWidth: 0.2,
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 10
+    },
     buttonPressed: {
         transform: [{ scale: 0.97 }],
     },

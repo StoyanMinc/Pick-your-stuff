@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: '100%',
         backgroundColor: '#fff',
-        borderRadius: 10
+        borderRadius: 10,
     },
     confirmButton: {
         backgroundColor: 'green'

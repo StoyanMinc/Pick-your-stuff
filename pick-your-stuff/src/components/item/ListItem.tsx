@@ -114,13 +114,14 @@ export default function ListItem() {
                     style={styles.button}
                     onPress={() => SetShowAddInput(true)}
                 >
-                    <Text style={styles.buttonText}>ADD NEW</Text>
+                    <Text style={styles.buttonText}>ADD NEW TASK</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
                 {showAddInput && (
                     <View style={styles.addItemContainer}>
                         <TextInput
+                        placeholder='Type new task here...'
                             style={styles.input}
                             ref={inputRef}
                             value={newItem}
@@ -135,6 +136,7 @@ export default function ListItem() {
                 )}
                 {listItemsToShow.length > 0
                     ? <FlatList
+                        contentContainerStyle={{ paddingBottom: 80 }}
                         data={listItemsToShow}
                         keyExtractor={(item) => item._id}
                         renderItem={({ item }) => (
