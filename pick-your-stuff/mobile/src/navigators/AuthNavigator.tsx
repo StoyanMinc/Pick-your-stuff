@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../components/login/Login';
 import Register from '../components/register/Register';
-import Lists from '../components/lists/Lists';
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
@@ -13,7 +12,6 @@ export default function AuthNavigator() {
         >
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="Your lists" component={Lists} />
         </Stack.Navigator>
     );
 }
