@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import StackListNavigator from "./StackListNavigator";
+import Profile from "../components/profile/Profile";
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +52,7 @@ export default function AppNavigator() {
             />
             <Tab.Screen
                 name="Profile"
-                component={() => null}
+                component={Profile}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="person" size={size + 4} color={color} />
