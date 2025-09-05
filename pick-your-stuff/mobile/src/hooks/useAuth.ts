@@ -18,7 +18,18 @@ export function useAuth() {
             setLoading(true);
             setError(null);
 
-      
+            // const response = await fetch("https://your-api.com/login", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({ email, password }),
+            // });
+
+            // if (!response.ok) {
+            //     throw new Error("Invalid email or password");
+            // }
+
+            // const data = await response.json();
+            // const token = data.token;
             await new Promise((resolve) => setTimeout(resolve, 1500));
             await AsyncStorage.setItem("token", 'dummy-token');
             setIsLoggedIn(true);
@@ -38,6 +49,18 @@ export function useAuth() {
                 throw new Error("Passwords do not match");
             }
 
+            // const response = await fetch("https://your-api.com/register", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify({ email, password }),
+            // });
+
+            // if (!response.ok) {
+            //     throw new Error("Registration failed");
+            // }
+
+            // const data = await response.json();
+            // const token = data.token;
             await new Promise((resolve) => setTimeout(resolve, 1500));
 
             await AsyncStorage.setItem("token", 'dummy-token');
