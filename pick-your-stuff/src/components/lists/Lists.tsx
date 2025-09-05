@@ -4,7 +4,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { lists } from '../../constants';
 import { styles } from './lists.styles';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type RootStackParamList = {
     'Your Lists': undefined;
@@ -30,6 +30,12 @@ export default function Lists() {
         );
     }
 
+    useEffect(() => {
+        if (showAddInput && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [showAddInput]);
+    
     const deleteList = (id: string) => {
         setListToDisplay((prevLists) => prevLists.filter((list) => list._id !== id));
     }
@@ -70,7 +76,7 @@ export default function Lists() {
                     <TouchableOpacity
                         style={[styles.addButton, styles.confirmButton]}
                         onPress={addNewList}
-                        >
+                    >
                         <Text style={styles.buttonText}>Confirm</Text>
                     </TouchableOpacity>
                 </View>

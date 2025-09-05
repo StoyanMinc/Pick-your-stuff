@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Lists from "../components/lists/Lists";
-import ListItem from '../components/item/ListItem';
-
+import ListItem from '../components/listItems/ListItem';
 const StackNavigator = createNativeStackNavigator();
 
 export default function StackListNavigator() {
