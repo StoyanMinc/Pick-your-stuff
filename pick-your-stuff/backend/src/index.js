@@ -11,13 +11,8 @@ const port = process.env.PORT || 3000;
 const server = express();
 
 server.use(express.json());
-server.use('/api', router);
 
-server.post('/api/register', (req, res) => {
-    const { email, password } = req.body
-    console.log(email, password)
-    res.send('ok')
-})
+server.use('/api', router);
 
 const startServer = async () => {
     try {
@@ -28,6 +23,6 @@ const startServer = async () => {
     } catch (error) {
         console.log(`Error starting server: ${error}`);
     }
-}
+};
 
 startServer();
