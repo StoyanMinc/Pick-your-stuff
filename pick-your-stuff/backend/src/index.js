@@ -1,9 +1,33 @@
 import express from 'express';
+import { config } from 'dotenv';
+
+import connectDB from './db/connect.js';
+import router from './router.js';
+
+config();
+
+const port = process.env.PORT || 3000;
 
 const server = express();
 
-server.get('/', (req, res) => {
+server.use(express.json());
+server.use('/api', router);
+
+server.post('/api/register', (req, res) => {
+    const { email, password } = req.body
+    console.log(email, password)
     res.send('ok')
 })
 
-server.listen(5500, () => console.log('server is listening ot port 5000...'));
+const startServer = async () => {
+    try {
+        await connectDB();
+        server.listen(port, () => {
+            console.log(`Server is listening on port ${port}...`);
+        });
+    } catch (error) {
+        console.log(`Error starting server: ${error}`);
+    }
+}
+
+startServer();
