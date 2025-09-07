@@ -21,7 +21,7 @@ export const protect = async (req, res, next) => {
         if (error.name === "TokenExpiredError") {
             return res.status(401).json({ message: "Access token expired" });
         }
-        if (err.name === "JsonWebTokenError") {
+        if (error.name === "JsonWebTokenError") {
             return res.status(403).json({ message: "Invalid token" });
         }
         console.log('ERROR PROTECT MIDDLEWARE:', error);

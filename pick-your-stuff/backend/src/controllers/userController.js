@@ -6,11 +6,10 @@ import { verifyRefreshToken } from '../utils/token.js';
 
 export const register = async (req, res) => {
     const { username, password } = req.body;
-    console.log('REQ BODY:', req.body)
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
-    if(username.length < 3) {
+    if (username.length < 3) {
         return res.status(400).json({ message: 'Username must be at least 3 characters long!' });
     }
     if (password.length < 3) {
@@ -39,14 +38,12 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
+    const { username, password } = req.body;
+    if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
 
     try {
-
         const existingUser = await User.findOne({ username });
         if (!existingUser) {
             return res.status(400).json({ message: 'Invalid username or password!' });
@@ -60,8 +57,8 @@ export const login = async (req, res) => {
         const refreshToken = generateRefreshToken(existingUser._id);
 
         res.status(201).json({
-            _id: userData._id,
-            username: userData.username,
+            _id: existingUser._id,
+            username: existingUser.username,
             accessToken,
             refreshToken
         });
