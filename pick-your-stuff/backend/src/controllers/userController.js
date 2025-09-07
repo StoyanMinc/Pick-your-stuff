@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
+
 import User from "../models/User.js";
-import { generateAccessToken } from "../utils/token.js";
-import { generateRefreshToken } from '../utils/token.js';
-import { verifyRefreshToken } from '../utils/token.js';
+import List from '../models/List.js';
+import ListItem from '../models/ListItem.js';
+
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/token.js";
 
 export const register = async (req, res) => {
     const { username, password } = req.body;
@@ -23,6 +25,8 @@ export const register = async (req, res) => {
         const userData = await User.create({ username, password });
         const accessToken = generateAccessToken(userData._id);
         const refreshToken = generateRefreshToken(userData._id);
+        userData.refreshToken = refreshToken;
+        await userData.save();
 
         res.status(201).json({
             _id: userData._id,
@@ -55,6 +59,8 @@ export const login = async (req, res) => {
         }
         const accessToken = generateAccessToken(existingUser._id);
         const refreshToken = generateRefreshToken(existingUser._id);
+        existingUser.refreshToken = refreshToken;
+        await existingUser.save();
 
         res.status(201).json({
             _id: existingUser._id,
@@ -134,9 +140,8 @@ export const deleteAccount = async (req, res) => {
             return res.status(404).json({ message: 'User not found!' });
         }
 
-        //TODO delete all user data
-        // await List.deleteMany({ ownerId: req.user._id });
-        // await ListItem.deleteMany({ ownerId: req.user._id });
+        await List.deleteMany({ ownerId: req.user._id });
+        await ListItem.deleteMany({ ownerId: req.user._id });
 
         res.status(200).json({ message: 'Account deleted successfully!' });
     } catch (error) {
@@ -147,12 +152,23 @@ export const deleteAccount = async (req, res) => {
 
 export const refreshTokens = async (req, res) => {
     const { refreshToken } = req.body;
+    if (!refreshToken) {
+        return res.status(401).json({ message: "No refresh token provided!" });
+    }
     try {
         const decoded = verifyRefreshToken(refreshToken);
+        const user = await User.findById(decoded.id);
+        if (!user || user.refreshToken !== refreshToken) {
+            return res.status(403).json({ message: "Invalid refresh token" });
+        }
         const newAccessToken = generateAccessToken(decoded.id);
-        const newRefreshToken = generateRefreshToken(decoded.id); // rotation
+        const newRefreshToken = generateRefreshToken(decoded.id);
+
+        user.refreshToken = newRefreshToken;
+        await user.save();
         return res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
     } catch (err) {
-        return res.status(403).json({ message: "Invalid refresh token!" });
+        console.error("ERROR REFRESHING TOKENS:", err);
+        return res.status(403).json({ message: "Invalid or expired refresh token!" });
     }
 };
