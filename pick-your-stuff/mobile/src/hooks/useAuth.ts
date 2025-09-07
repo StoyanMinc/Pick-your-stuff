@@ -1,10 +1,12 @@
-// src/hooks/useAuth.ts
+import axios from 'axios';
+import { SERVER_URL } from '@env';
 import { useContext, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { UserContext } from "../contexts/UserContext";
 
 type Credentials = {
-    email: string;
+    username: string;
     password: string;
 };
 
@@ -13,67 +15,56 @@ export function useAuth() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const login = async ({ email, password }: Credentials) => {
+    const login = async ({ username, password }: Credentials) => {
         try {
             setLoading(true);
             setError(null);
+            const response = await axios.post(`${SERVER_URL}/auth/login`, { username, password });
+            const accessToken = response.data.accessToken;
+            const refreshToken = response.data.refreshToken;
+            console.log(response.data);
 
-            // const response = await fetch("https://your-api.com/login", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({ email, password }),
-            // });
+            await AsyncStorage.setItem("accessToken", accessToken);
+            await AsyncStorage.setItem("refreshToken", refreshToken);
 
-            // if (!response.ok) {
-            //     throw new Error("Invalid email or password");
-            // }
-
-            // const data = await response.json();
-            // const token = data.token;
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            await AsyncStorage.setItem("token", 'dummy-token');
             setIsLoggedIn(true);
         } catch (err: any) {
-            setError(err.message || "Something went wrong");
+            setError(err.response.data.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     };
 
-    const register = async ({ email, password, repass }: Credentials & { repass: string }) => {
+    const register = async ({ username, password, repass }: Credentials & { repass: string }) => {
         try {
             setLoading(true);
             setError(null);
 
             if (password !== repass) {
-                throw new Error("Passwords do not match");
+                return setError("Passwords do not match");
             }
-
-            // const response = await fetch("https://your-api.com/register", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({ email, password }),
-            // });
-
-            // if (!response.ok) {
-            //     throw new Error("Registration failed");
-            // }
-
-            // const data = await response.json();
-            // const token = data.token;
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
-            await AsyncStorage.setItem("token", 'dummy-token');
+            const response = await axios.post(`${SERVER_URL}/auth/register`, { username, password });
+            await AsyncStorage.setItem("accessToken", response.data.accessToken);
+            await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
             setIsLoggedIn(true);
         } catch (err: any) {
-            setError(err.message || "Something went wrong");
+            setError(err.response.data.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     }
 
     const logout = async () => {
-        await AsyncStorage.removeItem("token");
+
+        const refreshToken = await AsyncStorage.getItem("refreshToken");
+        try {
+            await AsyncStorage.removeItem("accessToken");
+            await AsyncStorage.removeItem("refreshToken");
+            await axios.post(`${SERVER_URL}/auth/logout`, { refreshToken });
+
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
         setIsLoggedIn(false);
     };
 

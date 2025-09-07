@@ -10,14 +10,14 @@ type AuthStackParamList = {
 };
 
 export default function Register({ navigation }: any) {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [repass, setRepass] = useState('');
     const navigate = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
     const { register, loading, error } = useAuth();
 
     const registerHandler = async () => {
-        await register({ email, password, repass });
+        await register({ username, password, repass });
     };
 
     return (
@@ -25,12 +25,11 @@ export default function Register({ navigation }: any) {
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Please Register</Text>
             </View>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Username</Text>
             <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
+                value={username}
+                onChangeText={setUsername}
                 autoCapitalize="none"
 
             />

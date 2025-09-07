@@ -15,14 +15,14 @@ type AuthStackParamList = {
 
 
 export default function Login() {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
     const { login, loading, error } = useAuth();
 
     const loginHandler = async () => {
-        await login({ email, password });
+        await login({ username, password });
     };
 
     return (
@@ -30,12 +30,11 @@ export default function Login() {
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Please Login</Text>
             </View>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Username</Text>
             <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
+                value={username}
+                onChangeText={setUsername}
                 autoCapitalize="none"
 
             />
