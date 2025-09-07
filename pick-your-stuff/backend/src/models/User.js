@@ -12,11 +12,14 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String,
-        default: null
+        
     }
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        return next();
+    }
     const hashedPassword = await bcrypt.hash(this.password, 10);
     this.password = hashedPassword;
     next();

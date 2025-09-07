@@ -75,8 +75,21 @@ export const login = async (req, res) => {
     }
 };
 
-export const logout = (req, res) => {
-    res.status(200).json({ message: 'Logout successfully!' });
+export const logout = async (req, res) => {
+    const { refreshToken } = req.body;
+    try {
+        const user = await User.findOne({ refreshToken });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.refreshToken = null;
+        await user.save();
+
+        return res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("LOGOUT ERROR:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 export const getUser = async (req, res) => {
