@@ -17,9 +17,8 @@ server.use('/api', router);
 const startServer = async () => {
     try {
         await connectDB();
-        server.listen(port, () => {
-            console.log(`Server is listening on port ${port}...`);
-        });
+        server.listen(port, '0.0.0.0', () => console.log('Server running'));
+
     } catch (error) {
         console.log(`Error starting server: ${error}`);
     }
