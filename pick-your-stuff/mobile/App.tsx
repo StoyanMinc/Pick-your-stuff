@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import RootNavigator from './src/navigators/RootNavigator';
 import { UserProvider } from "./src/contexts/UserContext";
+import { navigationRef } from './src/navigators/RootNavigatorRef'; 
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -11,7 +12,7 @@ export default function App() {
 
     useEffect(() => {
         const checkLogin = async () => {
-            const token = await AsyncStorage.getItem('token');
+            const token = await AsyncStorage.getItem('accessToken');
             setIsLoggedIn(!!token);
             setIsLoading(false);
         };
@@ -20,7 +21,7 @@ export default function App() {
     if (isLoading) return null;
     return (
         <UserProvider>
-            <NavigationContainer>
+            <NavigationContainer ref={navigationRef}>
                 <RootNavigator />
             </NavigationContainer>
         </UserProvider>
