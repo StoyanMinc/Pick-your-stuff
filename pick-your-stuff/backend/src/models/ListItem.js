@@ -5,6 +5,10 @@ const listItemSchema = Schema({
         type: String,
         required: [true, 'List title is required!']
     },
+    isChecked: {
+        type: Boolean,
+        default: false
+    },
     ownerId: {
         type: Types.ObjectId,
         ref: 'User',
