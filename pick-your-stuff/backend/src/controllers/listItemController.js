@@ -3,8 +3,6 @@ import List from '../models/List.js'
 
 export const createListItem = async (req, res) => {
     const { title, listId } = req.body;
-    console.log(listId)
-    console.log(req.user)
     if (!title) {
         return res.status(400).json({ message: 'List Item title is required!' });
     }
@@ -13,7 +11,6 @@ export const createListItem = async (req, res) => {
     }
     try {
         const list = await List.findById(listId);
-        console.log(list)
         if (!list) {
             return res.status(404).json({ message: "List not found!" });
         }
@@ -43,7 +40,6 @@ export const getAllListsItems = async (req, res) => {
 
 export const deleteListItem = async (req, res) => {
     const { id } = req.params;
-    console.log(id)
     try {
         const listItem = await ListItem.findById(id);
         if (!listItem) {
@@ -60,3 +56,63 @@ export const deleteListItem = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error!', error })
     }
 }
+
+export const updateListItem = async (req, res) => {
+    console.log('work')
+    const { id } = req.params;
+    const { isChecked } = req.body;
+
+    try {
+        const updatedItem = await ListItem.findByIdAndUpdate(id, { isChecked: isChecked }, { new: true });
+        console.log(updatedItem)
+        res.status(200).json(updatedItem);
+    } catch (error) {
+        console.log('ERROR WITH SERVER CREATING LIST:', error);
+        return res.status(500).json({ message: 'Internal server error!', error })
+    }
+}
+
+export const checkAllItems = async (req, res) => {
+    const { id: listId } = req.params; // ✅ take from URL
+
+    try {
+        const list = await List.findById(listId);
+        if (!list) return res.status(404).json({ message: "List not found!" });
+        if (list.ownerId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Not allowed to modify this list!" });
+        }
+
+        await ListItem.updateMany(
+            { listId, ownerId: req.user._id },
+            { $set: { isChecked: true } }
+        );
+
+        res.status(200).json({ message: "All items checked successfully!" });
+    } catch (error) {
+        console.log("ERROR CHECKING ALL ITEMS:", error);
+        res.status(500).json({ message: "Internal server error!", error });
+    }
+};
+
+export const uncheckAllItems = async (req, res) => {
+    const { id: listId } = req.params; // ✅ take from URL
+
+    try {
+        const list = await List.findById(listId);
+        if (!list) return res.status(404).json({ message: "List not found!" });
+        if (list.ownerId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Not allowed to modify this list!" });
+        }
+
+        await ListItem.updateMany(
+            { listId, ownerId: req.user._id },
+            { $set: { isChecked: false } }
+        );
+
+        res.status(200).json({ message: "All items unchecked successfully!" });
+    } catch (error) {
+        console.log("ERROR UNCHECKING ALL ITEMS:", error);
+        res.status(500).json({ message: "Internal server error!", error });
+    }
+};
+
