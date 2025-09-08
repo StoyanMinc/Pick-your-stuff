@@ -63,4 +63,12 @@ export const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#fff',
     },
+    spinner: {
+        color: "#6a0dad"
+    },
+    spinnerText: {
+        marginTop: 10,
+        fontSize: 20,
+        fontWeight: 'bold'
+    }
 });

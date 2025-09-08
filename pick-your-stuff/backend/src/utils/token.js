@@ -2,14 +2,14 @@ import jwt from 'jsonwebtoken';
 
 export function generateAccessToken(id) {
     const token = jwt.sign({ id }, process.env.JWT_SECRET_ACCESS, {
-        expiresIn: '15m'
+        expiresIn: '1m'
     });
     return token;
 };
 
 export function generateRefreshToken(id) {
     const token = jwt.sign({ id }, process.env.JWT_SECRET_REFRESH, {
-        expiresIn: '7d'
+        expiresIn: '2m'
     });
     return token;
 };

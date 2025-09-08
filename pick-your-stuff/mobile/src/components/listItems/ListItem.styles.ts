@@ -73,6 +73,21 @@ export const styles = StyleSheet.create({
     },
     noDataText: {
         fontWeight: 'bold',
-        fontSize: 25
+        fontSize: 25,
+        color:'#6a0dad'
+    },
+    spinnerText: {
+        marginTop: 10,
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    errorContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    errorText: {
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: 16
     }
 })

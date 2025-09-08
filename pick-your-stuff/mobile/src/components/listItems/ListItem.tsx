@@ -1,36 +1,46 @@
-import { View, Text, FlatList, TouchableOpacity, Switch, TextInput, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Switch, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 
-import { listItems, lists } from '../../constants';
 import { styles } from './ListItem.styles';
+import { useListItems } from '../../hooks/useListItem';
 
 type RootStackParamList = {
     'Your Lists': undefined;
-    List: { id: string };
+    List: { id: string; title: string };
 };
 
 type ListRouteProp = RouteProp<RootStackParamList, 'List'>;
 
 export default function ListItem() {
-    const [items, setItems] = useState(listItems);
-    const [showAddInput, SetShowAddInput] = useState<boolean>(false);
-    const [newItem, setNewItem] = useState<string>('');
+    const route = useRoute<ListRouteProp>();
+    const { id, title } = route.params;
+
+    const {
+        items,
+        loading,
+        error,
+        addItem,
+        deleteItem,
+        toggleItem,
+        checkAll,
+        uncheckAll,
+        refresh
+    } = useListItems(id);
+
+    const [showAddInput, setShowAddInput] = useState(false);
+    const [newItem, setNewItem] = useState('');
+    const [actionError, setActionError] = useState<string | null>(null);
 
     const inputRef = useRef<TextInput>(null);
-    const route = useRoute<ListRouteProp>();
-
     const navigation = useNavigation();
-    const { id } = route.params;
-
-    const currentList = lists.find((list) => list._id === id);
 
     useEffect(() => {
-        if (currentList) {
-            navigation.setOptions({ title: currentList.title });
+        if (title) {
+            navigation.setOptions({ title });
         }
-    }, [navigation, currentList]);
+    }, [navigation, title]);
 
     useEffect(() => {
         if (showAddInput && inputRef.current) {
@@ -38,90 +48,73 @@ export default function ListItem() {
         }
     }, [showAddInput]);
 
-    const listItemsToShow = items.filter((item) => item.listId === id);
-    // const listItemsToShow: any = []
-
-    const toggleSwitch = (id: string) => {
-        setItems((prev) =>
-            prev.map((item) =>
-                item._id === id ? { ...item, isCheked: !item.isCheked } : item
-            )
-        );
+    const handleAddItem = async () => {
+        if (!newItem.trim()) {
+            setActionError('Task cannot be empty.');
+            return;
+        }
+        const result = await addItem(newItem);
+        if (!result) setActionError('Failed to create task.');
+        setNewItem('');
+        setShowAddInput(false);
     };
 
-    const checkAll = () => {
-        setItems((prev) => prev.map((item) => ({
-            ...item,
-            isCheked: true,
-        })))
-    }
-    const uncheckAll = () => {
-        setItems((prev) => prev.map((item) => ({
-            ...item,
-            isCheked: false,
-        })))
-    }
-
-    const addNewItem = () => {
-        console.log(newItem);
-        setItems((prev) => ([
-            ...prev,
-            {
-                _id: '123',
-                title: 'NEW ITEM',
-                isCheked: false,
-                listId: id,
-                ownerId: '1'
-            }
-        ]))
-        setNewItem('');
-        SetShowAddInput(false);
-    }
 
     const showDeleteConfirmation = (id: string, title: string) => {
         Alert.alert(
-            'Delete Item',
+            'Delete Task',
             `Are you sure you want to delete "${title}"?`,
             [
                 { text: 'Cancel', style: 'cancel' },
                 { text: 'Delete', style: 'destructive', onPress: () => deleteItem(id) },
             ]
         );
+    };
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color="#6a0dad" />
+                <Text style={styles.spinnerText}>Loading lists items...</Text>
+            </View>
+        );
     }
 
-    const deleteItem = (id: string) => {
-        setItems((prev) => prev.filter((item) => item._id !== id));
+    if (error) {
+        return (
+            <View style={[styles.container, styles.errorContainer]}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
     }
+
     return (
         <View style={styles.container}>
-            <View>
-
-            </View>
             <View style={styles.buttonContainer}>
                 <View style={styles.checkButtonsContainer}>
                     <TouchableOpacity
                         style={[styles.checkingBtn, styles.checkBtn]}
-                        onPress={checkAll}>
+                        onPress={() => checkAll(id)}>
                         <Text style={styles.buttonText}>check all</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.checkingBtn, styles.uncheckBtn]}
-                        onPress={uncheckAll}>
+                        onPress={() => uncheckAll(id)}>
                         <Text style={styles.buttonText}>uncheck all</Text>
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => SetShowAddInput(true)}
-                >
+                    onPress={() => setShowAddInput(true)}>
                     <Text style={styles.buttonText}>ADD NEW TASK</Text>
                 </TouchableOpacity>
             </View>
+
             <View style={{ flex: 1 }}>
                 {showAddInput && (
                     <View style={styles.addItemContainer}>
                         <TextInput
-                        placeholder='Type new task here...'
+                            placeholder="Type new task here..."
                             style={styles.input}
                             ref={inputRef}
                             value={newItem}
@@ -129,32 +122,36 @@ export default function ListItem() {
                         />
                         <TouchableOpacity
                             style={[styles.button, styles.confirmButton]}
-                            onPress={addNewItem}>
+                            onPress={handleAddItem}>
                             <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                     </View>
                 )}
-                {listItemsToShow.length > 0
-                    ? <FlatList
+                {items.length > 0 ? (
+                    <FlatList
                         contentContainerStyle={{ paddingBottom: 80 }}
-                        data={listItemsToShow}
+                        data={items}
                         keyExtractor={(item) => item._id}
                         renderItem={({ item }) => (
                             <View style={styles.itemView}>
                                 <Switch
                                     style={styles.switch}
-                                    value={item.isCheked}
-                                    onValueChange={() => toggleSwitch(item._id)}
+                                    value={item.isChecked}
+                                    onValueChange={() => { toggleItem(item._id, !item.isChecked) }}
                                 />
                                 <TouchableOpacity onLongPress={() => showDeleteConfirmation(item._id, item.title)}>
                                     <Text>{item.title}</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
+                        refreshing={loading}   // 🔹 shows spinner when loading
+                        onRefresh={refresh}
                     />
-                    : <View style={styles.noDataContainer}>
+                ) : (
+                    <View style={styles.noDataContainer}>
                         <Text style={styles.noDataText}>No data to show...</Text>
-                    </View>}
+                    </View>
+                )}
             </View>
         </View>
     );

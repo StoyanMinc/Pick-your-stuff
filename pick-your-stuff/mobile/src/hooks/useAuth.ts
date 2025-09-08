@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { SERVER_URL } from '@env';
+import Constants from 'expo-constants';
+const SERVER_URL = Constants.expoConfig?.extra?.SERVER_URL;
+
 import { useContext, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,9 +22,9 @@ export function useAuth() {
             setLoading(true);
             setError(null);
             const response = await axios.post(`${SERVER_URL}/auth/login`, { username, password });
+    
             const accessToken = response.data.accessToken;
             const refreshToken = response.data.refreshToken;
-            console.log(response.data);
 
             await AsyncStorage.setItem("accessToken", accessToken);
             await AsyncStorage.setItem("refreshToken", refreshToken);

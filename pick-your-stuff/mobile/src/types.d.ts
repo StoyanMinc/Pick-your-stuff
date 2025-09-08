@@ -1,7 +1,7 @@
-export interface Item {
+export interface ListItem {
     _id: string,
     title: string,
-    isCheked: boolean,
+    isChecked: boolean,
     listId: string,
     ownerId: string
 }
@@ -12,3 +12,11 @@ export interface List {
     ownerId: string
 }
 
+// navigation/types.ts
+export type RootStackParamList = {
+    Login: undefined;
+    Register: undefined;
+    Home: undefined;
+    List: { id: string; title: string };
+    Profile: undefined;
+};
