@@ -49,7 +49,11 @@ export default function Login() {
 
             {error && <Text style={{ color: "red" }}>{error}</Text>}
 
-            <TouchableOpacity style={styles.button} onPress={loginHandler} disabled={loading}>
+            <TouchableOpacity
+                style={styles.button}
+                onPress={loginHandler}
+                disabled={loading}
+            >
                 {loading ? (
                     <ActivityIndicator color="#fff" />
                 ) : (

@@ -46,13 +46,11 @@ export const login = async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
-
     try {
         const existingUser = await User.findOne({ username });
         if (!existingUser) {
             return res.status(400).json({ message: 'Invalid username or password!' });
         }
-
         const isPasswordMatch = await bcrypt.compare(password, existingUser.password);
         if (!isPasswordMatch) {
             return res.status(400).json({ message: 'Invalid username or password!' });
@@ -113,7 +111,6 @@ export const updateUser = async (req, res) => {
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found!' });
         }
-
         res.status(200).json(updatedUser);
     } catch (error) {
         console.log('ERROR WITH SERVER UPDATE USER:', error);
@@ -136,9 +133,9 @@ export const changePassword = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid current password!' });
         };
-
         existUser.password = newPassword;
         await existUser.save();
+
         res.status(200).json({ message: 'Change password successfully!' });
     } catch (error) {
         console.log('ERROR CHANGE PASSWORD:', error);

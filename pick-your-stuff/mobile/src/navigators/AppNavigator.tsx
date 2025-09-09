@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import StackListNavigator from "./StackListNavigator";
 import Profile from "../components/profile/Profile";
+import Home from "../components/home/Home";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +34,7 @@ export default function AppNavigator() {
         >
             <Tab.Screen
                 name="Home"
-                component={() => null}
+                component={Home}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="home" size={size + 4} color={color} /> // slightly bigger icon

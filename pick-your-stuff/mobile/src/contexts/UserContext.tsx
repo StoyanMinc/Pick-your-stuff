@@ -18,10 +18,10 @@ export type UserContextType = {
 // ✅ Create a context with default values
 export const UserContext = createContext<UserContextType>({
   isLoggedIn: false,
-  setIsLoggedIn: () => {},
+  setIsLoggedIn: () => { },
   user: null,
-  setUser: () => {},
-  logout: async () => {},
+  setUser: () => { },
+  logout: async () => { },
 });
 
 let externalLogout: (() => Promise<void>) | null = null; // global reference for Axios
@@ -56,7 +56,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
   externalLogout = logout;
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser, logout }}>
+    <UserContext.Provider value={{
+      isLoggedIn,
+      setIsLoggedIn,
+      user,
+      setUser,
+      logout
+    }}>
       {children}
     </UserContext.Provider>
   );
