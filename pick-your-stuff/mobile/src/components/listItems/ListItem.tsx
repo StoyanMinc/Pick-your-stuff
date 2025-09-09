@@ -115,6 +115,7 @@ export default function ListItem() {
                     <View style={styles.addItemContainer}>
                         <TextInput
                             placeholder="Type new task here..."
+                            placeholderTextColor="#555"
                             style={styles.input}
                             ref={inputRef}
                             value={newItem}

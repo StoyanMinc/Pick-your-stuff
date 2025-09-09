@@ -10,13 +10,14 @@ type AuthStackParamList = {
 
 export default function Register() {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repass, setRepass] = useState('');
     const navigate = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
     const { register, loading, error } = useAuth();
 
     const registerHandler = async () => {
-        await register({ username, password, repass });
+        await register({ username, email, password, repass });
     };
 
     return (
@@ -30,6 +31,17 @@ export default function Register() {
                     style={styles.input}
                     value={username}
                     onChangeText={setUsername}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="off"
+                    textContentType="none"
+                />
+
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
                     autoCapitalize="none"
                     autoCorrect={false}
                     autoComplete="off"

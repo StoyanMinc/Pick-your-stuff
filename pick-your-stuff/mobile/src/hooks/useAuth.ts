@@ -5,6 +5,7 @@ import { api } from "../api/axios";
 
 type Credentials = {
     username: string;
+    email?: string;
     password: string;
 };
 
@@ -35,17 +36,18 @@ export function useAuth() {
 
     const register = async ({
         username,
+        email,
         password,
         repass,
     }: Credentials & { repass: string }) => {
         if (username.length < 3) return setError("Username must be at least 3 characters long");
+        if (email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) return setError("Invalid email address");
         if (password.length < 3) return setError("Password must be at least 3 characters long");
         if (password !== repass) return setError("Passwords do not match");
-
         setLoading(true);
         setError(null);
         try {
-            const response = await api.post("/auth/register", { username, password });
+            const response = await api.post("/auth/register", { username, email, password });
             const { accessToken, refreshToken, _id } = response.data;
 
             await AsyncStorage.setItem("accessToken", accessToken);

@@ -18,6 +18,7 @@ export const api = axios.create({
 // 🔹 Request interceptor
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+        console.log(SERVER_URL);
         const accessToken = await AsyncStorage.getItem("accessToken");
         if (accessToken) {
             config.headers = config.headers ?? {};

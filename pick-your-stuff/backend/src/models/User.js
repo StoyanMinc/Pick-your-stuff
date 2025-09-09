@@ -4,7 +4,15 @@ import bcrypt from 'bcrypt';
 const userSchema = new Schema({
     username: {
         type: String,
+        unique: true,
         required: [true, 'Username is required!']
+    },
+    email: {
+        type: String,
+        required: [true, 'Email is required!'],
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
     password: {
         type: String,
@@ -12,7 +20,7 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String,
-        
+
     }
 }, { timestamps: true });
 

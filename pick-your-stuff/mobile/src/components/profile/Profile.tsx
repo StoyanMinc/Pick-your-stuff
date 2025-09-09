@@ -27,6 +27,7 @@ export default function ProfileScreen() {
         await logout()
         setLoadingButton(null);
     }
+    //TODO fix double click issue
     const updateUserHandler = async () => {
         setLoadingButton('username');
         const result = await updateUser(username);
@@ -71,6 +72,7 @@ export default function ProfileScreen() {
                     value={username}
                     onChangeText={setUsername}
                     placeholder="Enter new username"
+                    placeholderTextColor="#555"
                 />
                 {successCtx === 'username' && (
                     <Text style={[styles.resultMessage, styles.successMessage]}>Username updated successfully!</Text>
@@ -98,6 +100,7 @@ export default function ProfileScreen() {
                     value={currentPassword}
                     onChangeText={setCurrentPassword}
                     placeholder="Current Password"
+                    placeholderTextColor="#555"
                     secureTextEntry
                 />
                 {error && error === 'Invalid current password!' && (
@@ -108,6 +111,7 @@ export default function ProfileScreen() {
                     value={newPassword}
                     onChangeText={setNewPassword}
                     placeholder="New Password"
+                    placeholderTextColor="#555"
                     secureTextEntry
                 />
                 {successCtx === 'password' && (

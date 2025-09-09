@@ -92,6 +92,7 @@ export default function Lists() {
                     <TextInput
                         style={styles.input}
                         placeholder="Add new list here..."
+                        placeholderTextColor="#555"
                         ref={inputRef}
                         value={newList}
                         onChangeText={setNewList}
