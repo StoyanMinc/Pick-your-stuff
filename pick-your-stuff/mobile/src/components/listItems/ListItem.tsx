@@ -1,4 +1,14 @@
-import { View, Text, FlatList, TouchableOpacity, Switch, TextInput, Alert, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    FlatList,
+    TouchableOpacity,
+    Switch,
+    TextInput,
+    Alert,
+    ActivityIndicator
+
+} from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
@@ -155,5 +165,6 @@ export default function ListItem() {
                 )}
             </View>
         </View>
+
     );
 }

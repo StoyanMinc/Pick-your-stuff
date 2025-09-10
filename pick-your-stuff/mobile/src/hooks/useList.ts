@@ -13,9 +13,9 @@ export const useLists = () => {
         try {
             const response = await api.get<List[]>("/list");
             setLists(response.data);
-        } catch (err: any) {
-            console.log(err.response.status);
-            setError(err.response?.data?.message || "Something went wrong");
+        } catch (error: any) {
+            console.log(error.response.status);
+            setError(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -23,24 +23,47 @@ export const useLists = () => {
 
     const addList = async (title: string) => {
         if (!title.trim()) return null;
+        setLoading(true);
+        setError(null);
         try {
             const response = await api.post<List>("/list", { title });
             setLists(prev => [...prev, response.data]);
             return response.data;
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Failed to create list");
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Failed to create list");
             return null;
+        } finally {
+            setLoading(false);
         }
     };
 
     const deleteList = async (id: string) => {
+        setLoading(true);
+        setError(null);
         try {
             await api.delete(`/list/${id}`);
             setLists(prev => prev.filter(list => list._id !== id));
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Failed to delete list");
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Failed to delete list");
+        } finally {
+            setLoading(false);
         }
     };
+
+    const shareList = async (listId: string, email: string) => {
+        setError(null);
+        if (email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) return setError("Invalid email address");
+        try {
+            setLoading(true);
+            const response = await api.post(`/list/share`, { listId, email });
+            console.log(response.data);
+            return response.data
+        } catch (error: any) {
+            setError(error.response?.data?.message || "Failed to share list");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         fetchLists();
@@ -52,6 +75,7 @@ export const useLists = () => {
         error,
         addList,
         deleteList,
+        shareList,
         refresh: fetchLists,
     };
 };

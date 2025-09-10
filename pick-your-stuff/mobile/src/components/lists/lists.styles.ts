@@ -6,23 +6,9 @@ export const styles = StyleSheet.create({
         backgroundColor: '#f2f2f7',
         padding: 20,
     },
-    button: {
-        backgroundColor: '#6a0dad',
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        marginBottom: 15,
-        borderRadius: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4.65,
-        elevation: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     addList: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         marginBottom: 10,
     },
     addButton: {
@@ -57,11 +43,66 @@ export const styles = StyleSheet.create({
     buttonPressed: {
         transform: [{ scale: 0.97 }],
     },
+    listContainer: {
+        flexDirection: 'row',
+        gap: 5,
+        marginBottom: 12,
+    },
+    button: {
+        backgroundColor: '#6a0dad',
+        paddingVertical: 7,
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1
+    },
     listTitle: {
         textAlign: 'center',
         fontSize: 22,
         fontWeight: '700',
         color: '#fff',
+    },
+    showShareInputBtn: {
+        backgroundColor: 'hsla(275, 86%, 51%, 1.00)',
+        paddingVertical: 7,
+        paddingHorizontal: 7,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    showShareInputBtnText: {
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+    shareEmailContainer: {
+        flexDirection: 'row',
+        gap: 5,
+        marginBottom: 10
+    },
+    shareInput: {
+        borderColor: 'green',
+        borderWidth: 0.2,
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        flex: 1,
+        backgroundColor: '#fff',
+        borderRadius: 10
+    },
+    shareBtn: {
+        backgroundColor: 'green',
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    shareBtnText: {
+        color: '#fff',
+        fontWeight: 'bold'
     },
     spinner: {
         color: "#6a0dad"

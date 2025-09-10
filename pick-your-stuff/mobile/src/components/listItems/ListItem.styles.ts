@@ -25,6 +25,12 @@ export const styles = StyleSheet.create({
     uncheckBtn: {
         backgroundColor: 'red',
     },
+    shareBtn: {
+        backgroundColor: 'yellow',
+    },
+    shareBtnText: {
+        color: '#000'
+    },
     button: {
         backgroundColor: 'blue',
         padding: 10,
@@ -74,7 +80,7 @@ export const styles = StyleSheet.create({
     noDataText: {
         fontWeight: 'bold',
         fontSize: 25,
-        color:'#6a0dad'
+        color: '#6a0dad'
     },
     spinnerText: {
         marginTop: 10,
