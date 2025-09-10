@@ -9,7 +9,14 @@ const listSchema = Schema({
         type: Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    sharedWith: [
+        { type: Types.ObjectId, ref: 'User' }
+    ],
+    pendingShares: [{
+        email: { type: String, required: true },
+        token: { type: String, required: true },
+    }]
 });
 
 const List = model('List', listSchema);
