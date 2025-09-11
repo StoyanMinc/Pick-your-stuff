@@ -112,5 +112,14 @@ export const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 20,
         fontWeight: 'bold'
-    }
+    }, noDataContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    noDataText: {
+        fontWeight: 'bold',
+        fontSize: 25,
+        color: '#6a0dad'
+    },
 });

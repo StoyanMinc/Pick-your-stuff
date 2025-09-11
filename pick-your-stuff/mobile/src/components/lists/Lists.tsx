@@ -91,54 +91,61 @@ export default function Lists() {
                 )}
 
                 {actionError && <Text style={{ color: "red", textAlign: "center", marginVertical: 5 }}>{actionError}</Text>}
-                <FlatList
-                    contentContainerStyle={{ paddingBottom: 80 }}
-                    data={lists}
-                    keyExtractor={(list) => list._id}
-                    renderItem={({ item }) => (
-                        <View key={item._id}>
-                            <View style={styles.listContainer}>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => navigation.navigate("List", { id: item._id, title: item.title })}
-                                    onLongPress={() => showDeleteConfirmation(item._id, item.title)}
-                                >
-                                    <Text style={styles.listTitle}>{item.title}</Text>
-                                </TouchableOpacity>
+                {lists.length > 0 ? (
+                    <FlatList
+                        contentContainerStyle={{ paddingBottom: 80 }}
+                        data={lists}
+                        keyExtractor={(list) => list._id}
+                        renderItem={({ item }) => (
+                            <View key={item._id}>
+                                <View style={styles.listContainer}>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => navigation.navigate("List", { id: item._id, title: item.title })}
+                                        onLongPress={() => showDeleteConfirmation(item._id, item.title)}
+                                    >
+                                        <Text style={styles.listTitle}>{item.title}</Text>
+                                    </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    style={styles.showShareInputBtn}
-                                    onPress={() =>
-                                        setShowShareInput(prev =>
-                                            prev.show && prev.id === item._id ? { show: false, id: null } : { show: true, id: item._id }
-                                        )
-                                    }
-                                >
-                                    <Text style={styles.showShareInputBtnText}>share</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            {showShareInput.show && showShareInput.id === item._id && (
-                                <View style={styles.shareEmailContainer}>
-                                    <TextInput
-                                        style={styles.shareInput}
-                                        placeholder="Write email to share..."
-                                        placeholderTextColor="#555"
-                                        value={shareEmail}
-                                        onChangeText={setShareEmail}
-                                        keyboardType="email-address"
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                    <TouchableOpacity style={styles.shareBtn} onPress={() => shareHandler(item._id)}>
-                                        <Text style={styles.shareBtnText}>Send</Text>
+                                    <TouchableOpacity
+                                        style={styles.showShareInputBtn}
+                                        onPress={() =>
+                                            setShowShareInput(prev =>
+                                                prev.show && prev.id === item._id ? { show: false, id: null } : { show: true, id: item._id }
+                                            )
+                                        }
+                                    >
+                                        <Text style={styles.showShareInputBtnText}>share</Text>
                                     </TouchableOpacity>
                                 </View>
-                            )}
-                        </View>
-                    )}
-                    refreshing={loading}   // 🔹 shows spinner when loading
-                />
+
+                                {showShareInput.show && showShareInput.id === item._id && (
+                                    <View style={styles.shareEmailContainer}>
+                                        <TextInput
+                                            style={styles.shareInput}
+                                            placeholder="Write email to share..."
+                                            placeholderTextColor="#555"
+                                            value={shareEmail}
+                                            onChangeText={setShareEmail}
+                                            keyboardType="email-address"
+                                            autoCapitalize="none"
+                                            autoCorrect={false}
+                                        />
+                                        <TouchableOpacity style={styles.shareBtn} onPress={() => shareHandler(item._id)}>
+                                            <Text style={styles.shareBtnText}>Send</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                        refreshing={loading}   // 🔹 shows spinner when loading
+                    />
+                ) : (
+                    <View style={styles.noDataContainer}>
+                        <Text style={styles.noDataText}>No data to show...</Text>
+                    </View>
+                )}
+
                 {error && <Text style={{ color: "red" }}>{error}</Text>}
             </View>
         </KeyboardAvoidingView>
