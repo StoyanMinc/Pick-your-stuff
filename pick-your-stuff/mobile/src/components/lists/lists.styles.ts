@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f2f2f7',
         padding: 20,
+        paddingBottom: 25
     },
     addList: {
         flexDirection: 'row',

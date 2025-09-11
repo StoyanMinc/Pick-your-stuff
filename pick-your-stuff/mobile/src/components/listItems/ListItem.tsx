@@ -66,7 +66,7 @@ export default function ListItem() {
         const result = await addItem(newItem);
         if (!result) setActionError('Failed to create task.');
         setNewItem('');
-        setShowAddInput(false);
+        // setShowAddInput(false);
     };
 
 
@@ -115,7 +115,7 @@ export default function ListItem() {
                 </View>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => setShowAddInput(true)}>
+                    onPress={() => setShowAddInput((prev) => !prev)}>
                     <Text style={styles.buttonText}>ADD NEW TASK</Text>
                 </TouchableOpacity>
             </View>

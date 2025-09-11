@@ -8,5 +8,11 @@ export default {
     extra: {
       SERVER_URL: process.env.SERVER_URL,
     },
+    "android": {
+      "package": "com.stoyanm.pickyourstuff"
+    },
+    "ios": {
+      "bundleIdentifier": "com.stoyanm.pickyourstuff"
+    }
   },
 };

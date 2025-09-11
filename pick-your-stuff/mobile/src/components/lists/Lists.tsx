@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, TextInput, ActivityIndicator, Platform } from "react-native";
+import { View, Text, TouchableOpacity, Alert, TextInput, ActivityIndicator, Platform, FlatList, KeyboardAvoidingView } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -62,79 +62,86 @@ export default function Lists() {
     }
 
     return (
-        <KeyboardAwareScrollView
-            style={styles.container}
-            extraScrollHeight={Platform.OS === "ios" ? 20 : 10}
-            enableOnAndroid
-            keyboardShouldPersistTaps="handled"
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={80}
         >
-            <View style={styles.addList}>
-                <TouchableOpacity style={styles.addButton} onPress={() => setShowAddInput(prev => !prev)}>
-                    <Text style={styles.buttonText}>ADD NEW LIST</Text>
-                </TouchableOpacity>
-            </View>
-            {showAddInput && (
-                <View style={styles.addListContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Add new list here..."
-                        placeholderTextColor="#555"
-                        ref={inputRef}
-                        value={newList}
-                        onChangeText={setNewList}
-                    />
-                    <TouchableOpacity style={[styles.addButton, styles.confirmButton]} onPress={handleAddList}>
-                        <Text style={styles.buttonText}>Confirm</Text>
+
+            <View style={styles.container}>
+                <View style={styles.addList}>
+                    <TouchableOpacity style={styles.addButton} onPress={() => setShowAddInput(prev => !prev)}>
+                        <Text style={styles.buttonText}>ADD NEW LIST</Text>
                     </TouchableOpacity>
                 </View>
-            )}
-
-            {actionError && <Text style={{ color: "red", textAlign: "center", marginVertical: 5 }}>{actionError}</Text>}
-
-            {lists.map(list => (
-                <View key={list._id}>
-                    <View style={styles.listContainer}>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => navigation.navigate("List", { id: list._id, title: list.title })}
-                            onLongPress={() => showDeleteConfirmation(list._id, list.title)}
-                        >
-                            <Text style={styles.listTitle}>{list.title}</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.showShareInputBtn}
-                            onPress={() =>
-                                setShowShareInput(prev =>
-                                    prev.show && prev.id === list._id ? { show: false, id: null } : { show: true, id: list._id }
-                                )
-                            }
-                        >
-                            <Text style={styles.showShareInputBtnText}>share</Text>
+                {showAddInput && (
+                    <View style={styles.addListContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Add new list here..."
+                            placeholderTextColor="#555"
+                            ref={inputRef}
+                            value={newList}
+                            onChangeText={setNewList}
+                        />
+                        <TouchableOpacity style={[styles.addButton, styles.confirmButton]} onPress={handleAddList}>
+                            <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                     </View>
+                )}
 
-                    {showShareInput.show && showShareInput.id === list._id && (
-                        <View style={styles.shareEmailContainer}>
-                            <TextInput
-                                style={styles.shareInput}
-                                placeholder="Write email to share..."
-                                placeholderTextColor="#555"
-                                value={shareEmail}
-                                onChangeText={setShareEmail}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                            />
-                            <TouchableOpacity style={styles.shareBtn} onPress={() => shareHandler(list._id)}>
-                                <Text style={styles.shareBtnText}>Send</Text>
-                            </TouchableOpacity>
+                {actionError && <Text style={{ color: "red", textAlign: "center", marginVertical: 5 }}>{actionError}</Text>}
+                <FlatList
+                    contentContainerStyle={{ paddingBottom: 80 }}
+                    data={lists}
+                    keyExtractor={(list) => list._id}
+                    renderItem={({ item }) => (
+                        <View key={item._id}>
+                            <View style={styles.listContainer}>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => navigation.navigate("List", { id: item._id, title: item.title })}
+                                    onLongPress={() => showDeleteConfirmation(item._id, item.title)}
+                                >
+                                    <Text style={styles.listTitle}>{item.title}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={styles.showShareInputBtn}
+                                    onPress={() =>
+                                        setShowShareInput(prev =>
+                                            prev.show && prev.id === item._id ? { show: false, id: null } : { show: true, id: item._id }
+                                        )
+                                    }
+                                >
+                                    <Text style={styles.showShareInputBtnText}>share</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {showShareInput.show && showShareInput.id === item._id && (
+                                <View style={styles.shareEmailContainer}>
+                                    <TextInput
+                                        style={styles.shareInput}
+                                        placeholder="Write email to share..."
+                                        placeholderTextColor="#555"
+                                        value={shareEmail}
+                                        onChangeText={setShareEmail}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    <TouchableOpacity style={styles.shareBtn} onPress={() => shareHandler(item._id)}>
+                                        <Text style={styles.shareBtnText}>Send</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
                         </View>
                     )}
-                </View>
-            ))}
+                    refreshing={loading}   // 🔹 shows spinner when loading
+                />
+                {error && <Text style={{ color: "red" }}>{error}</Text>}
+            </View>
+        </KeyboardAvoidingView>
 
-            {error && <Text style={{ color: "red" }}>{error}</Text>}
-        </KeyboardAwareScrollView>
     );
 }

@@ -21,7 +21,6 @@ export const register = async (req, res) => {
     if (email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
-    console.log(req.body)
     try {
         const isExist = await User.findOne({ username });
         if (isExist) {
