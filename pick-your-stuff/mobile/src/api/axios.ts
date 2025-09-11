@@ -1,11 +1,9 @@
-// utils/api.ts
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from 'expo-constants';
-const SERVER_URL = Constants.expoConfig?.extra?.SERVER_URL;
-
-// import { navigationRef, navigate } from "../navigators/RootNavigatorRef";
+import Constants from "expo-constants";
 import { globalLogout } from "../contexts/UserContext";
+import { getUserData, setUserData } from "../utils/asyncStorage";
+
+const SERVER_URL = Constants.expoConfig?.extra?.SERVER_URL;
 
 interface AxiosRequestConfigWithRetry extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -15,21 +13,18 @@ export const api = axios.create({
     baseURL: SERVER_URL,
 });
 
-// 🔹 Request interceptor
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        const accessToken = await AsyncStorage.getItem("accessToken");
-        if (accessToken) {
-            config.headers = config.headers ?? {};
-            // ✅ Assign directly, compatible with React Native
-            (config.headers as Record<string, string>)["authorization"] = accessToken;
+        const userData = await getUserData();
+        if (userData?.accessToken) {
+            config.headers = config.headers || {};
+            (config.headers as any).set?.("authorization", userData.accessToken);
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
-// 🔹 Response interceptor
 api.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
@@ -45,29 +40,38 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const refreshToken = await AsyncStorage.getItem("refreshToken");
-                if (!refreshToken) throw new Error("No refresh token");
+                const userData = await getUserData();
+                if (!userData?.refreshToken) throw new Error("No refresh token");
 
-                const response = await axios.post(`${SERVER_URL}/auth/refresh-tokens`, { refreshToken });
+                const response = await axios.post(`${SERVER_URL}/auth/refresh-tokens`, {
+                    refreshToken: userData.refreshToken,
+                });
+
                 const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-                await AsyncStorage.setItem("accessToken", accessToken);
-                await AsyncStorage.setItem("refreshToken", newRefreshToken);
+                await setUserData({
+                    _id: userData._id,
+                    username: userData.username,
+                    email: userData.email,
+                    accessToken,
+                    refreshToken: newRefreshToken,
+                });
 
-                originalRequest.headers = originalRequest.headers ?? {};
-                (originalRequest.headers as Record<string, string>)["authorization"] = accessToken;
+                if (originalRequest.headers) {
+                    (originalRequest.headers as any).set?.("authorization", accessToken);
+                } else {
+                    originalRequest.headers = { authorization: accessToken } as any;
+                }
 
                 return api(originalRequest);
             } catch (err) {
-                //  ✅ Clear tokens and let RootNavigator handle redirect
-                // await AsyncStorage.removeItem("accessToken");
-                // await AsyncStorage.removeItem("refreshToken");
-                await globalLogout(); // safe to call outside React
+                await globalLogout();
                 return Promise.reject(err);
             }
         }
-
         return Promise.reject(error);
     }
 );
+
+
 

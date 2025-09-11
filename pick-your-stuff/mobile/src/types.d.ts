@@ -12,6 +12,13 @@ export interface List {
     ownerId: string
 }
 
+export interface userData {
+    _id: string,
+    username: string,
+    email: string,
+    accessToken: string
+    refreshToken: string
+}
 // navigation/types.ts
 export type RootStackParamList = {
     Login: undefined;
@@ -20,3 +27,4 @@ export type RootStackParamList = {
     List: { id: string; title: string };
     Profile: undefined;
 };
+
