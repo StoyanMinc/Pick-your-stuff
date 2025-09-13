@@ -29,6 +29,16 @@ export const getAllLists = async (req, res) => {
     }
 }
 
+export const getSharedLists = async (req, res) => {
+    try {
+        const sharedLists = await List.find({ sharedWith: req.user._id });
+        res.status(200).json(sharedLists);
+    } catch (error) {
+        console.log('ERROR WITH SERVER GETTING SHARED LISTS:', error);
+        return res.status(500).json({ message: 'Internal server error!', error })
+    }
+}
+
 export const deleteList = async (req, res) => {
     const { id } = req.params;
     try {
@@ -63,17 +73,12 @@ export const shareList = async (req, res) => {
             return res.status(401).json({ message: 'You can share only own lists!' });
         }
         const invitedUser = await User.findOne({ email });
+
         if (!invitedUser) { return res.status(404).json({ message: 'Invited user not found!' }); }
-        if (list.pendingShares.includes(invitedUser._id) || list.sharedWith.includes(invitedUser._id)) {
+        if (list.pendingShares.some(p => p.email.toString() === email.toString()) ||
+            list.sharedWith.some(id => id.toString() === invitedUser._id.toString())) {
+            console.log('EXIST!')
             return res.status(400).json({ message: 'User is already invited!' });
-        }
-        if (list.ownerId.toString() !== req.user._id.toString()) {
-            return res.status(401).json({ message: 'You can share only own lists!' });
-        }
-        const user = await User.findOne({ email });
-        console.log(user)
-        if (!user) {
-            return res.status(404).json({ message: 'User not found!' });
         }
         const token = generateEmailToken(listId, email);
         const baseUrl = process.env.SERVER_URL;
@@ -86,7 +91,7 @@ export const shareList = async (req, res) => {
             process.env.USER_EMAIL,
             "shareList",
             `"List App" <${process.env.USER_EMAIL}>`,
-            user.username,
+            invitedUser.username,
             req.user.username,
             { acceptLink, declineLink, listTitle: list.title }
         );
@@ -159,16 +164,6 @@ export const declineSharedList = async (req, res) => {
         res.status(200).json({ message: `You successfully decline access to list: ${list.title}` });
     } catch (error) {
         console.log('ERROR WITH SERVER ACCEPT SHARED LIST:', error);
-        return res.status(500).json({ message: 'Internal server error!', error })
-    }
-}
-
-export const getSharedLists = async (req, res) => {
-    try {
-        const sharedLists = await List.find({ sharedWith: req.user._id });
-        res.status(200).json(sharedLists);
-    } catch (error) {
-        console.log('ERROR WITH SERVER GETTING SHARED LISTS:', error);
         return res.status(500).json({ message: 'Internal server error!', error })
     }
 }
