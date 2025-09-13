@@ -21,10 +21,13 @@ export interface userData {
 }
 // navigation/types.ts
 export type RootStackParamList = {
+    Home: undefined;
+    "Your Lists": undefined;
+    List: { id: string };
+    AcceptList: { token: string };
+    DeclineList: { token: string };
+    Profile: undefined;
     Login: undefined;
     Register: undefined;
-    Home: undefined;
-    List: { id: string; title: string };
-    Profile: undefined;
 };
 

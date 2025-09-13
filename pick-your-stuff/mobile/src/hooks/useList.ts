@@ -3,65 +3,69 @@ import { List } from "../types";
 import { api } from "../api/axios";
 
 export const useLists = () => {
-    const [loading, setLoading] = useState(false);
+    const [listsLoading, setListsLoading] = useState(false);
+    const [actionLoading, setActionLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [lists, setLists] = useState<List[]>([]);
+    const [ownedLists, setOwnedLists] = useState<List[]>([]);
 
     const fetchLists = async () => {
-        setLoading(true);
+        setListsLoading(true);
         setError(null);
         try {
-            const response = await api.get<List[]>("/list");
-            setLists(response.data);
+            const [ownedRes, sharedRes] = await Promise.all([
+                api.get<List[]>("/list"),        // your own
+            ]);
+            setOwnedLists(ownedRes.data);
         } catch (error: any) {
-            console.log(error.response.status);
+            console.log(error.response?.status);
             setError(error.response?.data?.message || "Something went wrong");
         } finally {
-            setLoading(false);
+            setListsLoading(false);
         }
     };
 
     const addList = async (title: string) => {
         if (!title.trim()) return null;
-        setLoading(true);
+        setActionLoading(true);
         setError(null);
         try {
             const response = await api.post<List>("/list", { title });
-            setLists(prev => [...prev, response.data]);
+            setOwnedLists(prev => [...prev, response.data]);
             return response.data;
         } catch (error: any) {
             setError(error.response?.data?.message || "Failed to create list");
             return null;
         } finally {
-            setLoading(false);
+            setActionLoading(false);
         }
     };
 
     const deleteList = async (id: string) => {
-        setLoading(true);
+        setActionLoading(true);
         setError(null);
         try {
             await api.delete(`/list/${id}`);
-            setLists(prev => prev.filter(list => list._id !== id));
+            setOwnedLists(prev => prev.filter(list => list._id !== id));
         } catch (error: any) {
             setError(error.response?.data?.message || "Failed to delete list");
         } finally {
-            setLoading(false);
+            setActionLoading(false);
         }
     };
 
-    const shareList = async (listId: string, email: string) => {
+    const deleteSharedList = async (id: string) => {
+        setActionLoading(true);
         setError(null);
-        if (email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) return setError("Invalid email address");
         try {
-            setLoading(true);
-            const response = await api.post(`/list/share`, { listId, email });
-            console.log(response.data);
-            return response.data
+            await api.delete(`/list/shared/${id}`);
+            setSharedLists(prev => prev.filter(list => list._id !== id));
         } catch (error: any) {
-            setError(error.response?.data?.message || "Failed to share list");
+            setError(error.response?.data?.message || "Failed to delete list");
         } finally {
-            setLoading(false);
+            setActionLoading(false);
+        }
+    };
+
         }
     }
 
@@ -70,8 +74,9 @@ export const useLists = () => {
     }, []);
 
     return {
-        lists,
-        loading,
+        ownedLists,
+        listsLoading,
+        actionLoading,
         error,
         addList,
         deleteList,

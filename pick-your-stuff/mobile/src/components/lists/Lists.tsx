@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity, Alert, TextInput, ActivityIndicator, Platform, FlatList, KeyboardAvoidingView } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRef, useState, useEffect } from "react";
@@ -14,7 +13,7 @@ type RootStackParamList = {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Your Lists">;
 
 export default function Lists() {
-    const { lists, loading, error, addList, deleteList, shareList } = useLists();
+    const { ownedLists, listsLoading, actionLoading, error, addList, deleteList, shareList } = useLists();
     const [showAddInput, setShowAddInput] = useState(false);
     const [showShareInput, setShowShareInput] = useState<{ show: boolean, id: null | string }>({ show: false, id: null });
     const [newList, setNewList] = useState("");
@@ -34,7 +33,9 @@ export default function Lists() {
             return;
         }
         const result = await addList(newList);
-        if (!result) setActionError("Failed to create list.");
+        if (!result) {
+            setActionError(error);
+        }
         setNewList("");
         setShowAddInput(false);
     };
@@ -47,12 +48,15 @@ export default function Lists() {
     };
 
     const shareHandler = async (id: string) => {
-        await shareList(id, shareEmail);
+        const result = await shareList(id, shareEmail);
+        if (!result.success) {
+            setActionError(result.message);
+        }
         setShowShareInput({ show: false, id: null });
         setShareEmail('');
     };
 
-    if (loading) {
+    if (listsLoading) {
         return (
             <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
                 <ActivityIndicator size="large" color="#6a0dad" />
@@ -84,17 +88,23 @@ export default function Lists() {
                             value={newList}
                             onChangeText={setNewList}
                         />
-                        <TouchableOpacity style={[styles.addButton, styles.confirmButton]} onPress={handleAddList}>
-                            <Text style={styles.buttonText}>Confirm</Text>
+                        <TouchableOpacity
+                            style={[styles.addButton, styles.confirmButton]}
+                            onPress={handleAddList}
+                            disabled={actionLoading}
+                        >
+                            <Text style={styles.buttonText}>
+                                {actionLoading ? "Loading..." : "Confirm"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 )}
 
                 {actionError && <Text style={{ color: "red", textAlign: "center", marginVertical: 5 }}>{actionError}</Text>}
-                {lists.length > 0 ? (
+                {ownedLists.length > 0 ? (
                     <FlatList
                         contentContainerStyle={{ paddingBottom: 80 }}
-                        data={lists}
+                        data={ownedLists}
                         keyExtractor={(list) => list._id}
                         renderItem={({ item }) => (
                             <View key={item._id}>
@@ -131,14 +141,22 @@ export default function Lists() {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                         />
-                                        <TouchableOpacity style={styles.shareBtn} onPress={() => shareHandler(item._id)}>
-                                            <Text style={styles.shareBtnText}>Send</Text>
+                                        <TouchableOpacity
+                                            style={styles.shareBtn}
+                                            onPress={() => shareHandler(item._id)}
+                                            disabled={actionLoading}
+                                        >
+                                            {actionLoading ? (
+                                                <ActivityIndicator size="small" color="#fff" />
+                                            ) : (
+                                                <Text style={styles.shareBtnText}>Send</Text>
+                                            )}
                                         </TouchableOpacity>
                                     </View>
                                 )}
                             </View>
                         )}
-                        refreshing={loading}   // 🔹 shows spinner when loading
+                        refreshing={listsLoading}
                     />
                 ) : (
                     <View style={styles.noDataContainer}>
