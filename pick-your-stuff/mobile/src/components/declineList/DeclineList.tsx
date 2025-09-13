@@ -15,7 +15,7 @@ export default function DeclineList({ route, navigation }: DeclineListProps) {
 
                 const res = await api.get(`/list/decline-list/${token}`);
                 console.log(res.data.message);
-                navigation.navigate("Your Lists");
+                navigation.navigate("Shared Lists");
             } catch (err) {
                 console.error("Error declining shared list:", err);
             }

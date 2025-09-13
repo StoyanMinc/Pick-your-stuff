@@ -3,6 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import StackListNavigator from "./StackListNavigator";
 import Profile from "../components/profile/Profile";
 import Home from "../components/home/Home";
+import StackSharedListNavigator from "./StackSharedListNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -52,6 +53,16 @@ export default function AppNavigator() {
                 }}
             />
             <Tab.Screen
+                name="Shared Lists"
+                component={StackSharedListNavigator}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="list" size={size + 4} color={color} />
+                    ),
+                    headerShown: false
+                }}
+            />
+            <Tab.Screen
                 name="Profile"
                 component={Profile}
                 options={{
@@ -61,6 +72,5 @@ export default function AppNavigator() {
                 }}
             />
         </Tab.Navigator>
-
     );
 }

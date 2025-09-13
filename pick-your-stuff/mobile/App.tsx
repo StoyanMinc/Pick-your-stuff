@@ -21,10 +21,17 @@ function AppContent() {
                 "Your Lists": {
                     path: 'lists',
                     screens: {
+                        "Your Lists": '',
+                        List: ':id',
+                    },
+                },
+                "Shared Lists": {
+                    path: 'shared-list',
+                    screens: {
                         List: ':id',
                         AcceptList: 'accept/:token',
                         DeclineList: 'decline/:token',
-                        "Your Lists": '',
+                        "Shared Lists": '',
                     },
                 },
             },

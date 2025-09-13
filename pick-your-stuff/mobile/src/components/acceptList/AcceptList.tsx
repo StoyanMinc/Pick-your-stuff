@@ -13,7 +13,7 @@ export default function AcceptList({ route, navigation }: AcceptListProps) {
             try {
                 const res = await api.get(`/list/accept-list/${token}`);
                 console.log(res.data.message);
-                navigation.navigate('Your Lists');
+                navigation.navigate('Shared Lists');
             } catch (err) {
                 console.error("Error accepting shared list:", err);
             }

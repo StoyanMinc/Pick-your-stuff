@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { ListItem } from '../types';
 import { api } from '../api/axios';
 
-export const useListItems = (listId: string) => {
+export const useListItems = (listId: string, isOwn: boolean) => {
+    console.log(listId);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [items, setItems] = useState<ListItem[]>([]);
@@ -11,9 +12,15 @@ export const useListItems = (listId: string) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await api.get<ListItem[]>(`/list-item?listId=${listId}`);
+            const endpoint = isOwn
+                ? `/list-item?listId=${listId}`
+                : `/list-item/shared?listId=${listId}`;
+
+            const response = await api.get<ListItem[]>(endpoint);
+            console.log(response.data);
             setItems(response.data);
         } catch (err: any) {
+            console.log(err);
             setError(err.response?.data?.message || 'Something went wrong');
         } finally {
             setLoading(false);

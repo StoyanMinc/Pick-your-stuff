@@ -37,7 +37,7 @@ export default function ListItem() {
         checkAll,
         uncheckAll,
         refresh
-    } = useListItems(id);
+    } = useListItems(id, true);
 
     const [showAddInput, setShowAddInput] = useState(false);
     const [newItem, setNewItem] = useState('');

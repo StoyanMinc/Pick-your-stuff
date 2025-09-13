@@ -23,7 +23,9 @@ export interface userData {
 export type RootStackParamList = {
     Home: undefined;
     "Your Lists": undefined;
+    "Shared Lists": undefined;
     List: { id: string };
+    'Shared List': { id: string };
     AcceptList: { token: string };
     DeclineList: { token: string };
     Profile: undefined;
