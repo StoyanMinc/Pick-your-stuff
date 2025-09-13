@@ -5,6 +5,7 @@ import {
     declineSharedList,
     deleteList,
     getAllLists,
+    getSharedLists,
     shareList
 } from '../controllers/listController.js';
 import { protect } from '../middlewares/protect.js';
@@ -12,6 +13,7 @@ import { protect } from '../middlewares/protect.js';
 const listRouter = express.Router();
 
 listRouter.get('/', protect, getAllLists);
+listRouter.get('/shared', protect, getSharedLists);
 listRouter.post('/', protect, createList);
 listRouter.delete('/:id', protect, deleteList);
 listRouter.post('/share', protect, shareList);
@@ -22,9 +24,8 @@ listRouter.get('/a/:action/:token', (req, res) => {
 
     const { action, token } = req.params;
     let appLink;
-    console.log('MOBILE URL:', `${`${clientUrl}://lists/accept/${token}`}`)
-    if (action === 'accept') appLink = `${clientUrl}://lists/accept/${token}`;
-    else if (action === 'decline') appLink = `${clientUrl}://lists/decline/${token}`;
+    if (action === 'accept') appLink = `${clientUrl}://shared-list/accept/${token}`;
+    else if (action === 'decline') appLink = `${clientUrl}://shared-list/decline/${token}`;
     else return res.status(400).send('Invalid action');
     res.redirect(appLink);
 });

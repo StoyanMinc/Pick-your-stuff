@@ -27,10 +27,24 @@ export const createListItem = async (req, res) => {
 
 export const getAllListsItems = async (req, res) => {
     const { listId } = req.query;
-    console.log(listId)
-    console.log(req.user)
     try {
         const listItems = await ListItem.find({ ownerId: req.user._id, listId: listId });
+        res.status(200).json(listItems);
+    } catch (error) {
+        console.log('ERROR WITH SERVER GETTING LISTS:', error);
+        return res.status(500).json({ message: 'Internal server error!', error })
+    }
+}
+
+export const getAllSharedListsItems = async (req, res) => {
+    const { listId } = req.query;
+    console.log(listId)
+    try {
+        const list = await List.findById(listId);
+        if (!list.sharedWith.includes(req.user._id)) {
+            return res.status(403).json({ message: 'You are not in shared for this list!' })
+        }
+        const listItems = await ListItem.find({ listId: listId });
         res.status(200).json(listItems);
     } catch (error) {
         console.log('ERROR WITH SERVER GETTING LISTS:', error);
@@ -78,12 +92,17 @@ export const checkAllItems = async (req, res) => {
     try {
         const list = await List.findById(listId);
         if (!list) return res.status(404).json({ message: "List not found!" });
-        if (list.ownerId.toString() !== req.user._id.toString()) {
+
+        const userId = req.user._id.toString();
+        const isOwner = list.ownerId.toString() === userId;
+        const isShared = list.sharedWith.some(id => id.toString() === userId);
+
+        if (!isOwner && !isShared) {
             return res.status(403).json({ message: "Not allowed to modify this list!" });
         }
 
         await ListItem.updateMany(
-            { listId, ownerId: req.user._id },
+            { listId },
             { $set: { isChecked: true } }
         );
 
@@ -100,10 +119,14 @@ export const uncheckAllItems = async (req, res) => {
     try {
         const list = await List.findById(listId);
         if (!list) return res.status(404).json({ message: "List not found!" });
-        if (list.ownerId.toString() !== req.user._id.toString()) {
+
+        const userId = req.user._id.toString();
+        const isOwner = list.ownerId.toString() === userId;
+        const isShared = list.sharedWith.some(id => id.toString() === userId);
+
+        if (!isOwner && !isShared) {
             return res.status(403).json({ message: "Not allowed to modify this list!" });
         }
-
         await ListItem.updateMany(
             { listId, ownerId: req.user._id },
             { $set: { isChecked: false } }
