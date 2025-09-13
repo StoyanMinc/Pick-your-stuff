@@ -4,10 +4,32 @@ import { UserContext, UserProvider } from "./src/contexts/UserContext";
 import { navigationRef } from "./src/navigators/RootNavigatorRef";
 import RootNavigator from "./src/navigators/RootNavigator";
 import { getUserData } from "./src/utils/asyncStorage";
-
+import * as Linking from "expo-linking";
 function AppContent() {
     const [isLoading, setIsLoading] = useState(true);
     const { setUser, setIsLoggedIn } = useContext(UserContext);
+
+    const prefix = Linking.createURL('/');
+    const linking = {
+        prefixes: [prefix, 'pickyourstuff://'],
+        config: {
+            screens: {
+                Home: 'Home',
+                Profile: 'profile',
+                Login: 'login',
+                Register: 'register',
+                "Your Lists": {
+                    path: 'lists',
+                    screens: {
+                        List: ':id',
+                        AcceptList: 'accept/:token',
+                        DeclineList: 'decline/:token',
+                        "Your Lists": '',
+                    },
+                },
+            },
+        },
+    };
 
     useEffect(() => {
         const checkLogin = async () => {
@@ -24,7 +46,7 @@ function AppContent() {
     if (isLoading) return null;
 
     return (
-        <NavigationContainer ref={navigationRef}>
+        <NavigationContainer ref={navigationRef} linking={linking}>
             <RootNavigator />
         </NavigationContainer>
     );
