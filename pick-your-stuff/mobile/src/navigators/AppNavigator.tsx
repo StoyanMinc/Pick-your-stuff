@@ -57,7 +57,7 @@ export default function AppNavigator() {
                 component={StackSharedListNavigator}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="list" size={size + 4} color={color} />
+                        <Ionicons name="people-outline" size={size + 4} color={color} />
                     ),
                     headerShown: false
                 }}
