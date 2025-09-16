@@ -1,12 +1,50 @@
-<html>
-
-<body>
-    <p>Hi {{invatedUsername}},</p>
-    <p>You have been invited from <span>{{ownerUsername}}</span> to collaborate on the list: <b>{{listTitle}}</b>.</p>
-    <p>Click below to accept or decline:</p>
-    <p>You’ve been invited to a list!</p>
-    <p><a href="{{acceptLink}}">Accept</a> | <a href="{{declineLink}}">Decline</a></p>
-    <p>Thanks,<br /><b>Pick Your Stuff App<b></p>
-</body>
-
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>List Invitation</title>
+  </head>
+  <body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f8f9fa; color:#333;">
+    <table role="presentation" style="width:100%; border-collapse:collapse; background-color:#f8f9fa; padding:20px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" style="width:600px; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <!-- Header -->
+            <tr>
+              <td style="background:#6a0dad; padding:20px; text-align:center; color:#ffffff; font-size:24px; font-weight:bold;">
+                Pick Your Stuff
+              </td>
+            </tr>
+            <!-- Body -->
+            <tr>
+              <td style="padding:30px; font-size:16px; line-height:1.6; color:#333333;">
+                <p>Hi <strong>{{invatedUsername}}</strong>,</p>
+                <p>
+                  <strong>{{ownerUsername}}</strong> has invited you to collaborate on the list:
+                  <strong>"{{listTitle}}"</strong>.
+                </p>
+                <p style="margin:24px 0; text-align:center;">
+                  <a href="{{acceptLink}}" style="display:inline-block; padding:12px 24px; margin-right:10px; background:#6a0dad; color:#ffffff; text-decoration:none; font-weight:bold; border-radius:6px;">Accept</a>
+                  <a href="{{declineLink}}" style="display:inline-block; padding:12px 24px; background:#cccccc; color:#333333; text-decoration:none; font-weight:bold; border-radius:6px;">Decline</a>
+                </p>
+                <p>If the buttons don’t work, you can copy and paste these links into your browser:</p>
+                <p style="font-size:14px; word-break:break-all;">
+                  Accept: <a href="{{acceptLink}}">{{acceptLink}}</a><br />
+                  Decline: <a href="{{declineLink}}">{{declineLink}}</a>
+                </p>
+                <p>Thanks,<br /><strong>The Pick Your Stuff Team</strong></p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td style="background:#f1f1f1; padding:15px; text-align:center; font-size:12px; color:#777;">
+                © 2025 Pick Your Stuff. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

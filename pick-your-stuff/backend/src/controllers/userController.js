@@ -5,11 +5,10 @@ import List from '../models/List.js';
 import ListItem from '../models/ListItem.js';
 
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/token.js";
-import { isValidEmail } from '../utils/validators.js';
 
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
-    if (!username || !password) {
+    if (!username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
     if (username.length < 3) {
@@ -22,9 +21,16 @@ export const register = async (req, res) => {
         return res.status(400).json({ message: 'Invalid email address' });
     }
     try {
-        const isExist = await User.findOne({ username });
-        if (isExist) {
-            return res.status(400).json({ message: 'User already exist!' });
+        const existingUser = await User.findOne({
+            $or: [
+                { username },
+                { email }
+            ]
+        });
+        if (existingUser) {
+            if (existingUser.username === username) return res.status(400).json({ message: 'User with that username already exist!' })
+            if (existingUser.email === email) return res.status(400).json({ message: 'User with that email already exist!' })
+
         };
         const userData = await User.create({ username, email, password });
         const accessToken = generateAccessToken(userData._id);

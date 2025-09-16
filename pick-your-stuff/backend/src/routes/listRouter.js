@@ -4,6 +4,7 @@ import {
     createList,
     declineSharedList,
     deleteList,
+    deleteSharedList,
     getAllLists,
     getSharedLists,
     shareList
@@ -16,6 +17,7 @@ listRouter.get('/', protect, getAllLists);
 listRouter.get('/shared', protect, getSharedLists);
 listRouter.post('/', protect, createList);
 listRouter.delete('/:id', protect, deleteList);
+listRouter.delete('/shared/:id', protect, deleteSharedList);
 listRouter.post('/share', protect, shareList);
 listRouter.get('/accept-list/:token', acceptSharedList);
 listRouter.get('/decline-list/:token', declineSharedList);
