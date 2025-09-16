@@ -7,11 +7,10 @@ import {
     TextInput,
     Alert,
     ActivityIndicator
-
 } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { styles } from './ListItem.styles';
 import { useListItems } from '../../hooks/useListItem';
@@ -66,6 +65,7 @@ export default function ListItem() {
         const result = await addItem(newItem);
         if (!result) setActionError('Failed to create task.');
         setNewItem('');
+        inputRef.current?.focus();
         // setShowAddInput(false);
     };
 
@@ -130,11 +130,13 @@ export default function ListItem() {
                             ref={inputRef}
                             value={newItem}
                             onChangeText={setNewItem}
+                            onSubmitEditing={handleAddItem}
+                            blurOnSubmit={false}
                         />
                         <TouchableOpacity
-                            style={[styles.button, styles.confirmButton]}
+                            style={styles.buttonIcon}
                             onPress={handleAddItem}>
-                            <Text style={styles.buttonText}>Confirm</Text>
+                            <Ionicons name='send' size={20} color={'lightblue'} />
                         </TouchableOpacity>
                     </View>
                 )}

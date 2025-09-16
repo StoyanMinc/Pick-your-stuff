@@ -18,7 +18,7 @@ export default function StackSharedListNavigator() {
             }}
         >
             <StackNavigator.Screen name="Shared Lists" component={SharedLists} />
-            <StackNavigator.Screen name="Shared List" component={SharedListItem} />
+            <StackNavigator.Screen name="SharedListItem" component={SharedListItem} />
             <StackNavigator.Screen
                 name="AcceptList"
                 component={AcceptList}

@@ -96,6 +96,7 @@ export const useLists = () => {
         listsLoading,
         actionLoading,
         error,
+        setError,
         addList,
         deleteList,
         deleteSharedList,

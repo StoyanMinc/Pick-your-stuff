@@ -13,7 +13,7 @@ type RootStackParamList = {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Your Lists">;
 
 export default function Lists() {
-    const { ownedLists, listsLoading, actionLoading, error, addList, deleteList, shareList } = useLists();
+    const { ownedLists, listsLoading, actionLoading, error, setError, addList, deleteList, shareList, refresh } = useLists();
     const [showAddInput, setShowAddInput] = useState(false);
     const [showShareInput, setShowShareInput] = useState<{ show: boolean, id: null | string }>({ show: false, id: null });
     const [newList, setNewList] = useState("");
@@ -47,6 +47,10 @@ export default function Lists() {
         ]);
     };
 
+    const showShareInputHandler = async (id: string) => {
+        setActionError(null);
+        setShowShareInput(prev => prev.show && prev.id === id ? { show: false, id: null } : { show: true, id: id })
+    }
     const shareHandler = async (id: string) => {
         const result = await shareList(id, shareEmail);
         if (!result.success) {
@@ -119,10 +123,7 @@ export default function Lists() {
 
                                     <TouchableOpacity
                                         style={styles.showShareInputBtn}
-                                        onPress={() =>
-                                            setShowShareInput(prev =>
-                                                prev.show && prev.id === item._id ? { show: false, id: null } : { show: true, id: item._id }
-                                            )
+                                        onPress={() => showShareInputHandler(item._id)
                                         }
                                     >
                                         <Text style={styles.showShareInputBtnText}>share</Text>
@@ -157,6 +158,7 @@ export default function Lists() {
                             </View>
                         )}
                         refreshing={listsLoading}
+                        onRefresh={refresh}
                     />
                 ) : (
                     <View style={styles.noDataContainer}>

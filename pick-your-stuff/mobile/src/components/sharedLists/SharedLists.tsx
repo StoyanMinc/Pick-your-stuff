@@ -5,17 +5,15 @@ import { useState } from "react";
 
 import { styles } from "./sharedLists.styles";
 import { useLists } from "../../hooks/useList";
+import { RootStackParamList } from "../../types";  //
 
-type RootStackParamList = {
-    "Shared Lists": undefined;
-    'Shared List': { id: string; title: string };
-};
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Shared Lists">;
-
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "SharedListItem"
+>;
 export default function SharedLists() {
-    const { sharedLists, listsLoading, deleteSharedList, error } = useLists();
+    const { sharedLists, listsLoading, deleteSharedList, error, refresh } = useLists();
     const [actionError, setActionError] = useState<string | null>(null);
-
     const navigation = useNavigation<NavigationProp>();
 
     const showDeleteConfirmation = (id: string, title: string) => {
@@ -24,7 +22,6 @@ export default function SharedLists() {
             { text: "Delete", style: "destructive", onPress: () => deleteSharedList(id) },
         ]);
     };
-
     if (listsLoading) {
         return (
             <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
@@ -33,7 +30,6 @@ export default function SharedLists() {
             </View>
         );
     }
-
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#f2f2f7" }}>
             <KeyboardAvoidingView
@@ -53,7 +49,9 @@ export default function SharedLists() {
                                     <View style={styles.listContainer}>
                                         <TouchableOpacity
                                             style={styles.button}
-                                            onPress={() => navigation.navigate("Shared List", { id: item._id, title: item.title })}
+                                            // onPress={() => navigation.navigate("Shared List", { id: item._id, title: item.title })}
+                                            onPress={() => navigation.navigate("SharedListItem", { id: item._id, title: item.title })}
+
                                             onLongPress={() => showDeleteConfirmation(item._id, item.title)}
                                         >
                                             <Text style={styles.listTitle}>{item.title}</Text>
@@ -62,13 +60,13 @@ export default function SharedLists() {
                                 </View>
                             )}
                             refreshing={listsLoading}
+                            onRefresh={refresh}
                         />
                     ) : (
                         <View style={styles.noDataContainer}>
                             <Text style={styles.noDataText}>No shared lists yet...</Text>
                         </View>
                     )}
-
                     {error && <Text style={{ color: "red", textAlign: "center" }}>{error}</Text>}
                 </View>
             </KeyboardAvoidingView>

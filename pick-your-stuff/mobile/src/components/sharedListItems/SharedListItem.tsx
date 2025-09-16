@@ -15,10 +15,10 @@ import { useListItems } from '../../hooks/useListItem';
 
 type RootStackParamList = {
     'Shared Lists': undefined;
-    List: { id: string; title: string };
+    SharedListItem: { id: string; title: string };
 };
 
-type ListRouteProp = RouteProp<RootStackParamList, 'List'>;
+type ListRouteProp = RouteProp<RootStackParamList, 'SharedListItem'>;
 
 export default function SharedListItem() {
     const route = useRoute<ListRouteProp>();

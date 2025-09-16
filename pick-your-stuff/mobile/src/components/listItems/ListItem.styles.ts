@@ -56,9 +56,12 @@ export const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         borderRadius: 10,
+        position: 'relative'
     },
-    confirmButton: {
-        backgroundColor: 'green'
+    buttonIcon: {
+        position: 'absolute',
+        right: 10,
+        top: 15
     },
     itemView: {
         flexDirection: 'row',
