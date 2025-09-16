@@ -59,6 +59,26 @@ export const deleteList = async (req, res) => {
     }
 }
 
+export const deleteSharedList = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const list = await List.findById(id);
+        if (!list) {
+            return res.status(404).json({ message: 'List not found!' });
+        }
+        if (!list.sharedWith.includes(req.user._id)) {
+            return res.status(403).json({ message: 'You can delete only lists shared with you!' });
+        }
+        list.sharedWith = list.sharedWith.filter((shared) => shared.toString() !== req.user._id.toString());
+        await list.save();
+        res.status(200).json({ message: `List "${list.title}" deleted successfully!` });
+
+    } catch (error) {
+        console.log('ERROR WITH SERVER DELETING LIST:', error);
+        return res.status(500).json({ message: 'Internal server error!', error })
+    }
+}
+
 export const shareList = async (req, res) => {
     const { listId, email } = req.body;
     if (!listId || !email) {
@@ -77,13 +97,13 @@ export const shareList = async (req, res) => {
         if (!invitedUser) { return res.status(404).json({ message: 'Invited user not found!' }); }
         if (list.pendingShares.some(p => p.email.toString() === email.toString()) ||
             list.sharedWith.some(id => id.toString() === invitedUser._id.toString())) {
-            console.log('EXIST!')
             return res.status(400).json({ message: 'User is already invited!' });
         }
         const token = generateEmailToken(listId, email);
         const baseUrl = process.env.SERVER_URL;
         const acceptLink = `${baseUrl}/list/a/accept/${token}`;
-        const declineLink = `${baseUrl}/list/a/decline/${token}`;
+        const declineLink = `${baseUrl}://list/a/decline/${token}`;
+        console.log('shared email:', `${baseUrl}://list/a/accept/${token}`)
 
         await sendEmail(
             "List Sharing Invitation",
@@ -110,14 +130,10 @@ export const acceptSharedList = async (req, res) => {
     console.log('SHARING LIST TOKEN:', token)
     try {
         const decodedToken = verifyEmailToken(token);
-        console.log('SHARING LIST DECODED:', decodedToken)
-
         if (!decodedToken) {
             return res.status(403).json({ message: 'Invalid share token!' });
         }
         const list = await List.findById(decodedToken.listId);
-        console.log('SHARING LIST LIST:', list)
-
         if (!list) {
             return res.status(404).json({ message: 'List not found!' });
         }
@@ -125,9 +141,7 @@ export const acceptSharedList = async (req, res) => {
         if (pendingIndex === -1) {
             return res.status(400).json({ message: 'Invalid share token!' });
         }
-        console.log('SHARED LIST PENDING INDEX:', pendingIndex);
         const user = await User.findOne({ email: decodedToken.email });
-        console.log('SHARED LIST USER:', user);
         if (!user) {
             return res.status(404).json({ message: 'User not found!' });
         }
